@@ -555,10 +555,19 @@
 <body>
 
 <div class="navbar">
-    <a href="/">ExpenseTracker</a>
-    <a href="/add">Add Expense</a>
-    <a href="/view">View Expenses</a>
-    <a href="/summary">Summary</a>
+    <a href="/" class="navbar-brand">ExpenseTracker</a>
+    <div class="navbar-links">
+        <a href="/add">Add Expense</a>
+        <a href="/view">View Expenses</a>
+        <a href="/summary">Summary</a>
+        <th:block th:if="${user.admin}">
+            <a href="/admin/dashboard" style="color: var(--accent); font-weight: 600;">Admin Panel</a>
+        </th:block>
+        <div class="user-info">
+            <span style="font-weight: 500;">Welcome, <span th:text="${user.username}">User</span></span>
+            <a href="/auth/logout" class="logout-btn">Logout</a>
+        </div>
+    </div>
 </div>
 
 <div class="container">

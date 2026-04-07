@@ -384,10 +384,16 @@
 <body>
 
 <div class="navbar">
-    <a href="/">ExpenseTracker</a>
-    <a href="/add">Add Expense</a>
-    <a href="/view">View Expenses</a>
-    <a href="/summary">Summary</a>
+    <a href="/" class="navbar-brand">ExpenseTracker</a>
+    <div class="navbar-links">
+        <a href="/add">Add Expense</a>
+        <a href="/view">View Expenses</a>
+        <a href="/summary">Summary</a>
+        <div class="user-info">
+            <span style="font-weight: 500;">Welcome, <span>User</span></span>
+            <a href="/auth/logout" class="logout-btn">Logout</a>
+        </div>
+    </div>
 </div>
 
 <div class="container">
