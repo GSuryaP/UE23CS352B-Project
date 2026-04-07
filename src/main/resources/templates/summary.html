@@ -663,6 +663,55 @@
         </div>
     </div>
 
+    <!-- Report Section -->
+    <div class="info-section" style="background: linear-gradient(135deg, #f0fdf4 0%, #f0fdf4 100%); border: 2px solid var(--success);">
+        <h3 style="color: var(--success);">Generate & Export Reports</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Select a report type to generate and download your expense report.</p>
+        
+        <div class="info-grid" style="gap: 1rem;">
+            <!-- Monthly Report -->
+            <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #e0f2fe; cursor: pointer; transition: all 0.3s ease;" 
+                 onclick="selectReportType('monthly')" id="monthly-option">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <input type="radio" name="reportType" value="monthly" id="monthly-radio" style="cursor: pointer; width: 20px; height: 20px;">
+                    <label for="monthly-radio" style="cursor: pointer; font-weight: 600; font-size: 1.1rem; margin: 0;">Monthly Report</label>
+                </div>
+                <p style="color: var(--text-secondary); margin-left: 2rem; font-size: 0.9rem;">Expenses grouped by month with totals for each month</p>
+            </div>
+
+            <!-- Category-wise Report -->
+            <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #fef3c7; cursor: pointer; transition: all 0.3s ease;" 
+                 onclick="selectReportType('category')" id="category-option">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <input type="radio" name="reportType" value="category" id="category-radio" style="cursor: pointer; width: 20px; height: 20px;">
+                    <label for="category-radio" style="cursor: pointer; font-weight: 600; font-size: 1.1rem; margin: 0;">Category-wise Report</label>
+                </div>
+                <p style="color: var(--text-secondary); margin-left: 2rem; font-size: 0.9rem;">Expenses grouped by category with detailed breakdown</p>
+            </div>
+        </div>
+
+        <!-- Report Display and Export -->
+        <div id="report-display" style="margin-top: 2rem; display: none;">
+            <div style="background: #fffbeb; padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent); margin-bottom: 1.5rem;">
+                <p id="report-message" style="margin: 0; color: var(--text-primary); font-weight: 500;"></p>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="exportReport()" class="btn btn-primary" id="export-button" style="flex: 1; justify-content: center;">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Export as PDF
+                </button>
+                <button onclick="cancelReport()" class="btn btn-secondary" style="flex: 1; justify-content: center;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Action Buttons -->
     <div class="action-buttons">
         <a href="/add" class="btn btn-primary">
@@ -680,6 +729,57 @@
             View All Expenses
         </a>
     </div>
+
+    <script>
+        let selectedReportType = null;
+
+        function selectReportType(type) {
+            selectedReportType = type;
+            
+            // Update UI
+            document.getElementById('monthly-option').style.borderColor = type === 'monthly' ? '#3b82f6' : '#e0f2fe';
+            document.getElementById('monthly-option').style.backgroundColor = type === 'monthly' ? '#f0f9ff' : 'white';
+            document.getElementById('category-option').style.borderColor = type === 'category' ? '#f59e0b' : '#fef3c7';
+            document.getElementById('category-option').style.backgroundColor = type === 'category' ? '#fffbeb' : 'white';
+            
+            document.getElementById('monthly-radio').checked = type === 'monthly';
+            document.getElementById('category-radio').checked = type === 'category';
+            
+            // Show report display section
+            document.getElementById('report-display').style.display = 'block';
+            
+            // Update message
+            if (type === 'monthly') {
+                document.getElementById('report-message').textContent = '✓ Monthly Report selected. Click "Export as PDF" to download your expenses grouped by month.';
+            } else {
+                document.getElementById('report-message').textContent = '✓ Category-wise Report selected. Click "Export as PDF" to download your expenses grouped by category.';
+            }
+        }
+
+        function exportReport() {
+            if (!selectedReportType) {
+                alert('Please select a report type first.');
+                return;
+            }
+
+            const exportUrl = selectedReportType === 'monthly' 
+                ? '/report/monthly' 
+                : '/report/category';
+            
+            window.location.href = exportUrl;
+        }
+
+        function cancelReport() {
+            selectedReportType = null;
+            document.getElementById('report-display').style.display = 'none';
+            document.getElementById('monthly-radio').checked = false;
+            document.getElementById('category-radio').checked = false;
+            document.getElementById('monthly-option').style.borderColor = '#e0f2fe';
+            document.getElementById('monthly-option').style.backgroundColor = 'white';
+            document.getElementById('category-option').style.borderColor = '#fef3c7';
+            document.getElementById('category-option').style.backgroundColor = 'white';
+        }
+    </script>
 </div>
 
 </body>

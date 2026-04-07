@@ -2,9 +2,13 @@ package com.pesu.expensetracker.controller;
 
 import com.pesu.expensetracker.model.Expense;
 import com.pesu.expensetracker.service.ExpenseService;
+import com.pesu.expensetracker.service.ReportService;
 import com.pesu.expensetracker.util.SessionManager;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +22,9 @@ public class ExpenseController {
 
     @Autowired
     private ExpenseService expenseService;
+
+    @Autowired
+    private ReportService reportService;
 
     @Autowired
     private SessionManager sessionManager;
@@ -157,4 +164,57 @@ public class ExpenseController {
 
         return "chart";
     }
+
+    /**
+     * Export expenses as a monthly report PDF
+     * Adapter Pattern: Adapts expense data into PDF format
+     */
+    @GetMapping("/report/monthly")
+    public ResponseEntity<byte[]> exportMonthlyReport() {
+        if (!sessionManager.isLoggedIn()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        List<Expense> expenses = expenseService.getAllExpenses();
+        String userName = sessionManager.getLoggedInUser().getUsername();
+        
+        byte[] reportPdf = reportService.generateMonthlyReport(expenses, userName);
+        
+        if (reportPdf == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/pdf");
+        headers.set("Content-Disposition", "attachment; filename=\"monthly_report.pdf\"");
+        
+        return new ResponseEntity<>(reportPdf, headers, HttpStatus.OK);
+    }
+
+    /**
+     * Export expenses as a category-wise report PDF
+     * Adapter Pattern: Adapts expense data into PDF format
+     */
+    @GetMapping("/report/category")
+    public ResponseEntity<byte[]> exportCategoryReport() {
+        if (!sessionManager.isLoggedIn()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        List<Expense> expenses = expenseService.getAllExpenses();
+        String userName = sessionManager.getLoggedInUser().getUsername();
+        
+        byte[] reportPdf = reportService.generateCategoryReport(expenses, userName);
+        
+        if (reportPdf == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/pdf");
+        headers.set("Content-Disposition", "attachment; filename=\"category_report.pdf\"");
+        
+        return new ResponseEntity<>(reportPdf, headers, HttpStatus.OK);
+    }
 }
+
