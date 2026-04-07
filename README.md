@@ -141,6 +141,22 @@ git clone https://github.com/GSuryaP/Expense-Tracker.git
 cd Expense-Tracker
 ```
 
+### Make a MySQL user
+Open MySQL:
+```bash
+sudo mysql -u root -p
+```
+
+Run the following commands in the MySQL console
+```bash
+CREATE DATABASE expense_tracker_db;
+CREATE USER 'expense_user'@'localhost' IDENTIFIED BY 'password@123';
+GRANT ALL PRIVILEGES ON expense_tracker_db.* TO 'expense_user'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+```
+
+
 ### Run Application
 ```bash
 mvn clean
