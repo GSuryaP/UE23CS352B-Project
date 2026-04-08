@@ -1,6 +1,6 @@
 # Personal Expense Tracker System
 
-A full-stack web application built using **Spring Boot, Thymeleaf, and H2 Database** (with MySQL migration support) to manage and track personal expenses with multi-user support and admin functionality.
+A full-stack web application built using **Spring Boot, Thymeleaf, and MySQL Database** to manage and track personal expenses with multi-user support and admin functionality.
 
 ---
 
@@ -14,11 +14,10 @@ The Personal Expense Tracker System allows:
 - View only their own expenses
 - Edit and delete their entries
 - View personal spending summary
-- Visualize personal expenses by category using charts
+- Download personal expenses by category or by Month
 - Filter and search their expenses dynamically
 
 **Admin Users:**
-- Access all features available to regular users
 - View and manage all users in the system
 - Promote/demote users to/from admin role
 - View any user's expenses
@@ -34,14 +33,13 @@ This project follows proper **MVC architecture** and demonstrates core Object-Or
 |-------------|----------------|
 | Backend     | Spring Boot 4.0.2 |
 | Frontend    | Thymeleaf, HTML5, CSS3 |
-| Database    | H2 (In-Memory) or MySQL |
+| Database    | MySQL |
 | ORM         | Spring Data JPA (Hibernate) |
 | Authentication | Custom Session Management |
 | Security    | Spring Security |
 | Build Tool  | Maven |
 | Validation  | Jakarta Bean Validation |
 | Version Control | Git & GitHub |
-| Charts      | Chart.js |
 
 ---
 
@@ -59,6 +57,7 @@ The project follows the **MVC (Model-View-Controller)** pattern with service lay
 
 **Services:**
 - `ExpenseService` - Business logic for expenses (user-specific filtering)
+- `ReportService` - Business logic for generating and downloading reports
 - `UserService` - Business logic for user management and authentication
 
 **Controllers:**
@@ -87,7 +86,7 @@ The project follows the **MVC (Model-View-Controller)** pattern with service lay
 - ✅ User registration
 - ✅ Session-based authentication
 - ✅ User-specific expense isolation
-- ✅ Password hashing (basic implementation)
+- ✅ Password hashing
 
 ### Admin Features
 - ✅ View all users (non-admin)
@@ -99,9 +98,9 @@ The project follows the **MVC (Model-View-Controller)** pattern with service lay
 ### Advanced User Features
 - ✅ Expense Summary (Total Calculation)
 - ✅ Expense Summary for other users (admin only)
+- ✅ Download Expenditure report (Monthly or Category-wise Report)
 - ✅ Category-based filtering
 - ✅ Live search functionality
-- ✅ Pie/Bar Chart visualization
 - ✅ Validation using annotations
 - ✅ Responsive UI design
 
@@ -169,12 +168,6 @@ mvn spring-boot:run
 - **Registration:** `http://localhost:8080/auth/register`
 - **Admin Panel:** `http://localhost:8080/admin/dashboard` (admin users only)
 
-### Access H2 Database Console (Optional)
-- **URL:** `http://localhost:8080/h2-console`
-- **JDBC URL:** `jdbc:h2:mem:expensedb`
-- **Username:** `sa`
-- **Password:** (leave empty)
-
 ### First Steps After Running
 1. Application starts with default admin account created
 2. Access login page at `http://localhost:8080/auth/login`
@@ -187,15 +180,8 @@ mvn spring-boot:run
 
 ## Database Configuration
 
-### Current: H2 (In-Memory Database)
-Data persists during application runtime but is reset on restart.
-
-### Switch to MySQL (Persistent Database)
-See [MYSQL_MIGRATION.md](MYSQL_MIGRATION.md) for detailed instructions on:
-- Adding MySQL dependency
-- Updating connection properties
-- Creating MySQL database
-- Verifying migration
+### Current: MySQL
+Data persists in MySQL running locally
 
 ---
 
@@ -216,6 +202,7 @@ Expense-Tracker/
 │   │   └── UserRepository.java
 │   ├── service/
 │   │   ├── ExpenseService.java
+|   |   ├── ReportService.java
 │   │   └── UserService.java
 │   ├── util/
 │   │   └── SessionManager.java
@@ -241,66 +228,7 @@ Expense-Tracker/
 ├── README.md
 ├── Setup.md
 ```
-
----
-
-## Documentation
-
-- **[USER_GUIDE.md](USER_GUIDE.md)** - Comprehensive user guide for all features
-- **[MYSQL_MIGRATION.md](MYSQL_MIGRATION.md)** - Instructions to migrate from H2 to MySQL
-- **[Setup.md](Setup.md)** - Original setup instructions
-
----
-
-## Testing the Multi-User System
-
-### Test Case 1: User Isolation
-1. Register as `user1`
-2. Add expense: "Lunch - $10"
-3. Logout
-4. Register as `user2`
-5. View Expenses - You should NOT see user1's expense
-6. ✅ Verify: Only user2's expenses visible
-
-### Test Case 2: Admin Access
-1. Login as `admin`
-2. Go to Admin Panel
-3. View users and click "View Expenses" for user1
-4. ✅ Verify: Can see user1's expenses
-
-### Test Case 3: Role Management
-1. Login as `admin`
-2. Promote `user1` to admin
-3. Logout and login as `user1`
-4. ✅ Verify: "Admin Panel" link appears in navigation
-
----
-
-## Future Enhancements
-
-- [ ] Change password functionality
-- [ ] Password reset via email
-- [ ] Two-factor authentication
-- [ ] Expense sharing between users
-- [ ] Budget tracking
-- [ ] Export expenses to CSV/PDF
-- [ ] Mobile app
-- [ ] Social expense splitting
-- [ ] Recurring expenses
-- [ ] Better password hashing (BCrypt)
-
----
-
-## Known Limitations
-
-- Simple password hashing (use bcrypt in production)
-- Session stored in memory (use Redis for production clustering)
-- No email verification during registration
-- No password recovery mechanism
-- Admin can delete themselves from database directly
-
 ---
 
 ## Authors
-- Original: [G S S Surya Prakash](https://github.com/GSuryaP)
-- Enhanced with: Multi-user authentication, Admin features, MySQL migration guide
+- [G S S Surya Prakash](https://github.com/GSuryaP), [Chandan Chatragadda](https://github.com/chandan365c) and [Drishti Golchha](https://github.com/golchha27)
