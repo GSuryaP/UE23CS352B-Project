@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Summary - Expense Tracker</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f766e;
+            --primary-light: #14b8a6;
+            --primary-dark: #0d5e57;
+            --accent: #f59e0b;
+            --bg-main: #fafaf9;
+            --bg-card: #ffffff;
+            --text-primary: #1c1917;
+            --text-secondary: #57534e;
+            --border: #e7e5e4;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --success: #10b981;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --blue: #3b82f6;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #fafaf9 0%, #f5f5f4 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: var(--bg-card);
+            padding: 1.5rem 2rem;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            box-shadow: 0 2px 10px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .navbar::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+        }
+
+        .navbar a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar a:first-child {
+            margin-right: auto;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .navbar a:not(:first-child):hover {
+            background: var(--bg-main);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .navbar a:nth-child(5) {
+            background: var(--primary);
+            color: white;
+        }
+
+        .navbar a:nth-child(5):hover {
+            background: var(--primary-dark);
+            color: white;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 2rem;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header Section */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Icon */
+        .icon-wrapper {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
+        }
+
+        .icon-wrapper svg {
+            width: 34px;
+            height: 34px;
+            stroke: white;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        /* Total Card - Hero Stats */
+        .total-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 3rem;
+            border-radius: 24px;
+            text-align: center;
+            margin-bottom: 3rem;
+            box-shadow: 0 8px 32px rgba(15, 118, 110, 0.3);
+            animation: fadeInUp 0.6s ease 0.2s backwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .total-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .total-card::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .total-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .total-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -2px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .currency-symbol {
+            font-size: 3rem;
+            opacity: 0.9;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.08),
+                0 0 0 1px var(--border);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease backwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.3s; }
+        .stat-card:nth-child(2) { animation-delay: 0.4s; }
+        .stat-card:nth-child(3) { animation-delay: 0.5s; }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .stat-icon.purple {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+        }
+
+        .stat-icon.purple svg {
+            stroke: var(--purple);
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        }
+
+        .stat-icon.blue svg {
+            stroke: var(--blue);
+        }
+
+        .stat-icon.orange {
+            background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+        }
+
+        .stat-icon.orange svg {
+            stroke: #ea580c;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Info Section */
+        .info-section {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.08),
+                0 0 0 1px var(--border);
+            animation: fadeInUp 0.6s ease 0.6s backwards;
+        }
+
+        .info-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .info-item-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-main);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .info-item-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--primary);
+            stroke-width: 2.5;
+            fill: none;
+        }
+
+        .info-item-content h4 {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-item-content p {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.6s ease 0.7s backwards;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-main);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            animation: fadeInUp 0.6s ease 0.3s backwards;
+        }
+
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--bg-main);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .empty-state-icon svg {
+            width: 40px;
+            height: 40px;
+            stroke: var(--text-secondary);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .empty-state h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .total-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .total-amount {
+                font-size: 3rem;
+            }
+
+            .currency-symbol {
+                font-size: 2.25rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+
+            .navbar {
+                padding: 1rem;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .navbar a:first-child {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="/" class="navbar-brand">ExpenseTracker</a>
+    <div class="navbar-links">
+        <a href="/add">Add Expense</a>
+        <a href="/view">View Expenses</a>
+        <a href="/summary">Summary</a>
+        <th:block th:if="${user.admin}">
+            <a href="/admin/dashboard" style="color: var(--accent); font-weight: 600;">Admin Panel</a>
+        </th:block>
+        <div class="user-info">
+            <span style="font-weight: 500;">Welcome, <span th:text="${user.username}">User</span></span>
+            <a href="/auth/logout" class="logout-btn">Logout</a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="page-header">
+        <div class="icon-wrapper">
+            <svg viewBox="0 0 24 24">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+        </div>
+        <h2>Expense Summary</h2>
+        <p class="subtitle">Your complete financial overview at a glance</p>
+    </div>
+
+    <!-- Total Spending Card -->
+    <div class="total-card">
+        <div class="total-label">Total Spending</div>
+        <div class="total-amount">
+            <span class="currency-symbol">₹</span><span th:text="${total}">0</span>
+        </div>
+    </div>
+
+    <!-- Stats Grid - Placeholder for future enhancements -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">This Month</div>
+                <div class="stat-icon purple">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-value">₹<span th:text="${total}">0</span></div>
+            <div class="stat-description">Current month expenses</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">Average</div>
+                <div class="stat-icon blue">
+                    <svg viewBox="0 0 24 24">
+                        <line x1="12" y1="20" x2="12" y2="10"></line>
+                        <line x1="18" y1="20" x2="18" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="16"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-value">₹<span th:text="${average}">0.00</span></div>
+            <div class="stat-description">Per transaction</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">Categories</div>
+                <div class="stat-icon orange">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <div class="stat-value"><span th:text="${categoryCount}">0</span></div>
+            <div class="stat-description">Tracked categories</div>
+        </div>
+    </div>
+
+    <!-- Additional Info Section -->
+    <div class="info-section">
+        <h3>Financial Insights</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-item-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <div class="info-item-content">
+                    <h4>Last Updated</h4>
+                    <p>Just now</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-item-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div class="info-item-content">
+                    <h4>Account Status</h4>
+                    <p>Active</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-item-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                </div>
+                <div class="info-item-content">
+                    <h4>Export</h4>
+                    <p>Available</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Section -->
+    <div class="info-section" style="background: linear-gradient(135deg, #f0fdf4 0%, #f0fdf4 100%); border: 2px solid var(--success);">
+        <h3 style="color: var(--success);">Generate & Export Reports</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Select a report type to generate and download your expense report.</p>
+        
+        <div class="info-grid" style="gap: 1rem;">
+            <!-- Monthly Report -->
+            <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #e0f2fe; cursor: pointer; transition: all 0.3s ease;" 
+                 onclick="selectReportType('monthly')" id="monthly-option">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <input type="radio" name="reportType" value="monthly" id="monthly-radio" style="cursor: pointer; width: 20px; height: 20px;">
+                    <label for="monthly-radio" style="cursor: pointer; font-weight: 600; font-size: 1.1rem; margin: 0;">Monthly Report</label>
+                </div>
+                <p style="color: var(--text-secondary); margin-left: 2rem; font-size: 0.9rem;">Expenses grouped by month with totals for each month</p>
+            </div>
+
+            <!-- Category-wise Report -->
+            <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #fef3c7; cursor: pointer; transition: all 0.3s ease;" 
+                 onclick="selectReportType('category')" id="category-option">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <input type="radio" name="reportType" value="category" id="category-radio" style="cursor: pointer; width: 20px; height: 20px;">
+                    <label for="category-radio" style="cursor: pointer; font-weight: 600; font-size: 1.1rem; margin: 0;">Category-wise Report</label>
+                </div>
+                <p style="color: var(--text-secondary); margin-left: 2rem; font-size: 0.9rem;">Expenses grouped by category with detailed breakdown</p>
+            </div>
+        </div>
+
+        <!-- Report Display and Export -->
+        <div id="report-display" style="margin-top: 2rem; display: none;">
+            <div style="background: #fffbeb; padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent); margin-bottom: 1.5rem;">
+                <p id="report-message" style="margin: 0; color: var(--text-primary); font-weight: 500;"></p>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="exportReport()" class="btn btn-primary" id="export-button" style="flex: 1; justify-content: center;">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Export as PDF
+                </button>
+                <button onclick="cancelReport()" class="btn btn-secondary" style="flex: 1; justify-content: center;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <a href="/add" class="btn btn-primary">
+            <svg viewBox="0 0 24 24">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add New Expense
+        </a>
+        <a href="/view" class="btn btn-secondary">
+            <svg viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            View All Expenses
+        </a>
+    </div>
+
+    <script>
+        let selectedReportType = null;
+
+        function selectReportType(type) {
+            selectedReportType = type;
+            
+            // Update UI
+            document.getElementById('monthly-option').style.borderColor = type === 'monthly' ? '#3b82f6' : '#e0f2fe';
+            document.getElementById('monthly-option').style.backgroundColor = type === 'monthly' ? '#f0f9ff' : 'white';
+            document.getElementById('category-option').style.borderColor = type === 'category' ? '#f59e0b' : '#fef3c7';
+            document.getElementById('category-option').style.backgroundColor = type === 'category' ? '#fffbeb' : 'white';
+            
+            document.getElementById('monthly-radio').checked = type === 'monthly';
+            document.getElementById('category-radio').checked = type === 'category';
+            
+            // Show report display section
+            document.getElementById('report-display').style.display = 'block';
+            
+            // Update message
+            if (type === 'monthly') {
+                document.getElementById('report-message').textContent = '✓ Monthly Report selected. Click "Export as PDF" to download your expenses grouped by month.';
+            } else {
+                document.getElementById('report-message').textContent = '✓ Category-wise Report selected. Click "Export as PDF" to download your expenses grouped by category.';
+            }
+        }
+
+        function exportReport() {
+            if (!selectedReportType) {
+                alert('Please select a report type first.');
+                return;
+            }
+
+            const exportUrl = selectedReportType === 'monthly' 
+                ? '/report/monthly' 
+                : '/report/category';
+            
+            window.location.href = exportUrl;
+        }
+
+        function cancelReport() {
+            selectedReportType = null;
+            document.getElementById('report-display').style.display = 'none';
+            document.getElementById('monthly-radio').checked = false;
+            document.getElementById('category-radio').checked = false;
+            document.getElementById('monthly-option').style.borderColor = '#e0f2fe';
+            document.getElementById('monthly-option').style.backgroundColor = 'white';
+            document.getElementById('category-option').style.borderColor = '#fef3c7';
+            document.getElementById('category-option').style.backgroundColor = 'white';
+        }
+    </script>
+</div>
+
+</body>
+</html>
