@@ -231,4 +231,6 @@ Expense-Tracker/
 ---
 
 ## Authors
-- [G S S Surya Prakash](https://github.com/GSuryaP), [Chandan Chatragadda](https://github.com/chandan365c) and [Drishti Golchha](https://github.com/golchha27)
+- [G S S Surya Prakash](https://github.com/GSuryaP)
+- [Chandan Chatragadda](https://github.com/chandan365c)
+- [Drishti Golchha](https://github.com/golchha27)
