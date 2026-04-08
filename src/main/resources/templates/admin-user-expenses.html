@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Expenses - Expense Tracker Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ──── Admin Navbar ──── */
+        .navbar {
+            background: rgba(15, 23, 42, 0.97);
+            padding: 0 2.5rem; height: 68px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 4px 24px rgba(0,0,0,0.3);
+            position: sticky; top: 0; z-index: 200;
+            backdrop-filter: blur(12px);
+        }
+        .navbar::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--accent), #f59e0b, var(--primary-light));
+        }
+        .navbar-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem; font-weight: 700;
+            color: white; text-decoration: none;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .brand-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--accent), #ea580c);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+        }
+        .brand-icon svg { width: 16px; height: 16px; stroke: white; stroke-width: 2.5; fill: none; }
+        .admin-badge {
+            font-size: 0.62rem; font-weight: 700;
+            background: var(--accent); color: white;
+            padding: 0.18rem 0.55rem; border-radius: 4px;
+            letter-spacing: 0.8px; text-transform: uppercase;
+        }
+        .navbar-links { display: flex; gap: 0.25rem; align-items: center; }
+        .navbar-links a {
+            color: rgba(255,255,255,0.65); text-decoration: none;
+            font-weight: 600; font-size: 0.88rem;
+            padding: 0.45rem 0.9rem; border-radius: var(--radius-sm); transition: all 0.25s ease;
+        }
+        .navbar-links a:hover { background: rgba(255,255,255,0.1); color: white; }
+        .logout-btn-dark {
+            background: linear-gradient(135deg, var(--accent), #ea580c);
+            color: white !important; padding: 0.45rem 1rem !important;
+            border-radius: var(--radius-sm) !important; font-weight: 700 !important;
+            box-shadow: 0 2px 8px rgba(245,158,11,0.35);
+        }
+        .logout-btn-dark:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* ──── Layout ──── */
+        body { background: #f1f5f9; }
+        .container {
+            max-width: 1050px; margin: 3rem auto; padding: 0 2rem;
+            animation: fadeInUp 0.6s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ──── Breadcrumb ──── */
+        .breadcrumb {
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-bottom: 1.75rem; font-size: 0.88rem; color: var(--text-secondary);
+        }
+        .breadcrumb a {
+            color: var(--primary); text-decoration: none; font-weight: 600;
+            display: flex; align-items: center; gap: 0.35rem; transition: color 0.2s;
+        }
+        .breadcrumb a svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.5; fill: none; }
+        .breadcrumb a:hover { color: var(--primary-dark); }
+        .breadcrumb-sep { color: var(--border); }
+
+        /* ──── User Profile Card ──── */
+        .profile-card {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            padding: 2rem 2.5rem;
+            border-radius: var(--radius-xl);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+            animation: fadeInUp 0.6s ease 0.1s backwards;
+        }
+        .profile-avatar {
+            width: 72px; height: 72px; flex-shrink: 0;
+            background: linear-gradient(135deg, var(--accent), #ea580c);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem; font-weight: 700; color: white;
+            box-shadow: 0 4px 16px rgba(245,158,11,0.4);
+        }
+        .profile-info { flex: 1; }
+        .profile-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem; font-weight: 700; color: white;
+            margin-bottom: 0.3rem; letter-spacing: -0.5px;
+        }
+        .profile-email { color: rgba(255,255,255,0.6); font-size: 0.92rem; font-weight: 500; }
+        .profile-stats {
+            display: flex; gap: 2rem; flex-wrap: wrap;
+        }
+        .profile-stat { text-align: center; }
+        .profile-stat-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem; font-weight: 700; color: white;
+        }
+        .profile-stat-label { font-size: 0.78rem; color: rgba(255,255,255,0.55); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* ──── Stats Grid ──── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+            position: relative; overflow: hidden;
+        }
+        .stat-card::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        .stat-card h3 {
+            font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);
+            text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 0.6rem;
+        }
+        .stat-card .value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem; font-weight: 700; color: var(--primary);
+        }
+        .stat-card .value.email-val {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem; font-weight: 600; color: var(--text-primary); word-break: break-all;
+        }
+
+        /* ──── Table Card ──── */
+        .table-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease 0.25s backwards;
+        }
+        .table-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .table-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem; font-weight: 700; color: var(--text-primary);
+        }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: linear-gradient(135deg, #f8fafc, #f1f5f9); }
+        th {
+            padding: 0.9rem 1.25rem; text-align: left;
+            font-weight: 700; font-size: 0.78rem;
+            color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.6px;
+            border-bottom: 2px solid var(--border);
+        }
+        tbody tr { border-bottom: 1px solid var(--border); transition: background 0.2s ease; }
+        tbody tr:hover { background: #f8fafc; }
+        tbody tr:last-child { border-bottom: none; }
+        td { padding: 1rem 1.25rem; color: var(--text-primary); font-size: 0.93rem; }
+
+        /* Category Badge */
+        .category-badge {
+            display: inline-block; padding: 0.28rem 0.75rem; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 700;
+            background: linear-gradient(135deg, rgba(15,118,110,0.1), rgba(20,184,166,0.15));
+            color: var(--primary); border: 1px solid rgba(15,118,110,0.2);
+            text-transform: capitalize;
+        }
+        .amount-cell { font-weight: 700; font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--primary); }
+        .date-cell { color: var(--text-secondary); font-size: 0.88rem; font-weight: 500; }
+
+        /* Empty State */
+        .empty-state { text-align: center; padding: 4rem 2rem; }
+        .empty-state svg { width: 56px; height: 56px; stroke: var(--border); stroke-width: 1.5; fill: none; margin-bottom: 1rem; }
+        .empty-state p { color: var(--text-secondary); font-size: 1rem; font-weight: 500; }
+
+        /* ──── Responsive ──── */
+        @media (max-width: 768px) {
+            .navbar { padding: 0 1.25rem; }
+            .container { margin: 2rem auto; padding: 0 1rem; }
+            .profile-card { flex-direction: column; text-align: center; }
+            .profile-stats { justify-content: center; }
+            .table-card { overflow-x: auto; }
+            table { min-width: 600px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/admin/dashboard" class="navbar-brand">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            ExpenseTracker
+            <span class="admin-badge">Admin</span>
+        </a>
+        <div class="navbar-links">
+            <a href="/admin/dashboard">Dashboard</a>
+            <a href="/admin/users">Users</a>
+            <a href="/">← Home</a>
+            <a href="/auth/logout" class="logout-btn-dark">Logout ([[${adminUser.username}]])</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="/admin/users">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                All Users
+            </a>
+            <span class="breadcrumb-sep">/</span>
+            <span th:text="${user.username}">Username</span>
+        </div>
+
+        <!-- User Profile Card -->
+        <div class="profile-card">
+            <div class="profile-avatar" th:text="${#strings.substring(user.username, 0, 1).toUpperCase()}">U</div>
+            <div class="profile-info">
+                <div class="profile-name" th:text="${user.username}">Username</div>
+                <div class="profile-email" th:text="${user.email}">email@example.com</div>
+            </div>
+            <div class="profile-stats">
+                <div class="profile-stat">
+                    <div class="profile-stat-value" th:text="${expenses.size()}">0</div>
+                    <div class="profile-stat-label">Entries</div>
+                </div>
+                <div class="profile-stat">
+                    <div class="profile-stat-value">₹<span th:text="${#numbers.formatDecimal(totalExpenses, 1, 2)}">0.00</span></div>
+                    <div class="profile-stat-label">Total Spent</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expenses Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3>Expense History</h3>
+                <span style="font-size:0.85rem; color: var(--text-secondary);" th:text="${expenses.size()} + ' entries'">0 entries</span>
+            </div>
+
+            <th:block th:if="${expenses.size() > 0}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="expense : ${expenses}">
+                            <td><span class="date-cell" th:text="${expense.date}">2024-01-01</span></td>
+                            <td><span class="category-badge" th:text="${expense.category}">Food</span></td>
+                            <td th:text="${expense.description}">Description</td>
+                            <td class="amount-cell" th:text="'₹' + ${#numbers.formatDecimal(expense.amount, 1, 2)}">₹0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </th:block>
+            <div th:if="${expenses.size() == 0}" class="empty-state">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <p>No expenses found for this user</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
