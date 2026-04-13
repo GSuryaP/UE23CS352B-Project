@@ -3,565 +3,321 @@
 <head>
     <title>Summary - Expense Tracker</title>
     <link rel="stylesheet" href="/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #0f766e;
-            --primary-light: #14b8a6;
-            --primary-dark: #0d5e57;
-            --accent: #f59e0b;
-            --bg-main: #fafaf9;
-            --bg-card: #ffffff;
-            --text-primary: #1c1917;
-            --text-secondary: #57534e;
-            --border: #e7e5e4;
-            --shadow: rgba(0, 0, 0, 0.1);
-            --success: #10b981;
-            --purple: #8b5cf6;
-            --pink: #ec4899;
-            --blue: #3b82f6;
-        }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: linear-gradient(135deg, #fafaf9 0%, #f5f5f4 100%);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        /* Navbar Styles */
+        /* ──── Navbar ──── */
         .navbar {
-            background: var(--bg-card);
-            padding: 1.5rem 2rem;
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-            box-shadow: 0 2px 10px var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255,255,255,0.96);
+            padding: 0 2.5rem; height: 68px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 1px 0 var(--border), 0 4px 20px rgba(0,0,0,0.06);
+            position: sticky; top: 0; z-index: 200;
+            backdrop-filter: blur(12px);
         }
-
-        .navbar::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+        .navbar::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--accent));
         }
-
-        .navbar a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            position: relative;
+        .navbar-brand {
+            font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700;
+            color: var(--primary); text-decoration: none;
+            letter-spacing: -0.5px; display: flex; align-items: center; gap: 0.6rem;
         }
-
-        .navbar a:first-child {
-            margin-right: auto;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--primary);
+        .navbar-brand .brand-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
         }
-
-        .navbar a:not(:first-child):hover {
-            background: var(--bg-main);
-            color: var(--primary);
-            transform: translateY(-2px);
+        .navbar-brand .brand-icon svg { width: 16px; height: 16px; stroke: white; stroke-width: 2.5; fill: none; }
+        .navbar-links { display: flex; gap: 0.25rem; align-items: center; }
+        .navbar-links a {
+            color: var(--text-secondary); text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            padding: 0.45rem 0.9rem; border-radius: var(--radius-sm); transition: all 0.25s ease;
         }
-
-        .navbar a:nth-child(5) {
-            background: var(--primary);
-            color: white;
+        .navbar-links a:hover { background: var(--bg-main); color: var(--primary); }
+        .navbar-links a.nav-active { background: var(--primary); color: white; }
+        .navbar-links .admin-link { color: var(--accent); background: #fffbeb; border: 1px solid #fde68a; }
+        .user-chip {
+            display: flex; align-items: center; gap: 0.75rem; margin-left: 0.5rem;
+            padding-left: 1rem; border-left: 1px solid var(--border);
         }
-
-        .navbar a:nth-child(5):hover {
-            background: var(--primary-dark);
-            color: white;
+        .user-avatar {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 700; color: white;
         }
+        .user-name { font-size: 0.88rem; font-weight: 600; color: var(--text-primary); }
+        .logout-btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white !important;
+            padding: 0.45rem 1rem !important; border-radius: var(--radius-sm) !important;
+            font-weight: 700 !important; box-shadow: 0 2px 8px rgba(245,158,11,0.3);
+        }
+        .logout-btn:hover { background: var(--accent-dark) !important; transform: translateY(-1px); }
 
-        /* Container */
+        /* ──── Layout ──── */
         .container {
-            max-width: 1200px;
-            margin: 4rem auto;
-            padding: 0 2rem;
+            max-width: 1100px; margin: 3rem auto; padding: 0 2rem;
             animation: fadeInUp 0.6s ease;
         }
-
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(28px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* Header Section */
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
+        /* ──── Page Header ──── */
+        .page-header { text-align: center; margin-bottom: 2.5rem; }
+        .icon-wrapper {
+            width: 68px; height: 68px;
+            background: linear-gradient(135deg, var(--purple), #ec4899);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.25rem;
+            box-shadow: 0 8px 24px rgba(139,92,246,0.3);
         }
-
+        .icon-wrapper svg { width: 32px; height: 32px; stroke: white; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
         h2 {
             font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.5px;
+            font-size: 2.25rem; font-weight: 700;
+            color: var(--text-primary); margin-bottom: 0.4rem; letter-spacing: -0.5px;
         }
+        .subtitle { color: var(--text-secondary); font-size: 0.97rem; }
 
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-
-        /* Icon */
-        .icon-wrapper {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
-        }
-
-        .icon-wrapper svg {
-            width: 34px;
-            height: 34px;
-            stroke: white;
-            stroke-width: 2.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            fill: none;
-        }
-
-        /* Total Card - Hero Stats */
+        /* ──── Total Card ──── */
         .total-card {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            padding: 3rem;
-            border-radius: 24px;
-            text-align: center;
-            margin-bottom: 3rem;
-            box-shadow: 0 8px 32px rgba(15, 118, 110, 0.3);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            padding: 3rem; border-radius: var(--radius-xl); text-align: center;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 12px 36px rgba(15,118,110,0.3);
             animation: fadeInUp 0.6s ease 0.2s backwards;
-            position: relative;
-            overflow: hidden;
+            position: relative; overflow: hidden;
         }
-
         .total-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            content: ''; position: absolute; top: -50%; right: -15%;
+            width: 280px; height: 280px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
             border-radius: 50%;
         }
-
         .total-card::after {
-            content: '';
-            position: absolute;
-            bottom: -30%;
-            left: -10%;
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            content: ''; position: absolute; bottom: -40%; left: -10%;
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
             border-radius: 50%;
         }
-
         .total-label {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            z-index: 1;
+            color: rgba(255,255,255,0.88);
+            font-size: 0.92rem; font-weight: 600;
+            margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1.5px;
+            position: relative; z-index: 1;
         }
-
         .total-amount {
             font-family: 'Playfair Display', serif;
-            font-size: 4rem;
-            font-weight: 700;
-            color: white;
-            letter-spacing: -2px;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700;
+            color: white; letter-spacing: -2px;
+            position: relative; z-index: 1;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
+        .currency-symbol { font-size: 0.75em; opacity: 0.88; }
 
-        .currency-symbol {
-            font-size: 3rem;
-            opacity: 0.9;
-        }
-
-        /* Stats Grid */
+        /* ──── Stats Grid ──── */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem; margin-bottom: 2rem;
         }
-
         .stat-card {
             background: var(--bg-card);
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 
-                0 4px 20px rgba(0, 0, 0, 0.08),
-                0 0 0 1px var(--border);
+            padding: 1.75rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
             transition: all 0.3s ease;
             animation: fadeInUp 0.6s ease backwards;
         }
-
         .stat-card:nth-child(1) { animation-delay: 0.3s; }
         .stat-card:nth-child(2) { animation-delay: 0.4s; }
         .stat-card:nth-child(3) { animation-delay: 0.5s; }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        }
-
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(0,0,0,0.1); }
         .stat-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 1rem;
         }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .stat-title { font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; }
+        .stat-icon-badge {
+            width: 42px; height: 42px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
         }
-
-        .stat-icon svg {
-            width: 24px;
-            height: 24px;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            fill: none;
-        }
-
-        .stat-icon.purple {
-            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
-        }
-
-        .stat-icon.purple svg {
-            stroke: var(--purple);
-        }
-
-        .stat-icon.blue {
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-        }
-
-        .stat-icon.blue svg {
-            stroke: var(--blue);
-        }
-
-        .stat-icon.orange {
-            background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
-        }
-
-        .stat-icon.orange svg {
-            stroke: #ea580c;
-        }
-
-        .stat-title {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
+        .stat-icon-badge svg { width: 20px; height: 20px; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+        .stat-icon-badge.purple { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
+        .stat-icon-badge.purple svg { stroke: var(--purple); }
+        .stat-icon-badge.blue   { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+        .stat-icon-badge.blue svg   { stroke: var(--blue); }
+        .stat-icon-badge.orange { background: linear-gradient(135deg, #fed7aa, #fdba74); }
+        .stat-icon-badge.orange svg { stroke: #ea580c; }
         .stat-value {
             font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
+            font-size: 1.9rem; font-weight: 700;
+            color: var(--text-primary); margin-bottom: 0.2rem;
         }
+        .stat-desc { font-size: 0.82rem; color: var(--text-secondary); }
 
-        .stat-description {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-
-        /* Info Section */
+        /* ──── Info Section ──── */
         .info-section {
             background: var(--bg-card);
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 
-                0 4px 20px rgba(0, 0, 0, 0.08),
-                0 0 0 1px var(--border);
-            animation: fadeInUp 0.6s ease 0.6s backwards;
+            padding: 2.25rem; border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+            margin-bottom: 1.75rem;
+            animation: fadeInUp 0.6s ease 0.55s backwards;
         }
-
         .info-section h3 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: var(--text-primary);
+            font-size: 1.5rem; font-weight: 700;
+            margin-bottom: 1.5rem; color: var(--text-primary);
         }
-
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.75rem;
         }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
+        .info-item { display: flex; align-items: center; gap: 1rem; }
         .info-item-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--bg-main);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 42px; height: 42px;
+            background: var(--bg-main); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border);
             flex-shrink: 0;
         }
+        .info-item-icon svg { width: 18px; height: 18px; stroke: var(--primary); stroke-width: 2.5; fill: none; }
+        .info-item-content h4 { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; margin-bottom: 0.2rem; }
+        .info-item-content p { font-weight: 700; color: var(--text-primary); font-size: 1rem; }
 
-        .info-item-icon svg {
-            width: 20px;
-            height: 20px;
-            stroke: var(--primary);
-            stroke-width: 2.5;
-            fill: none;
+        /* ──── Report Section ──── */
+        .report-section {
+            background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+            padding: 2.25rem; border-radius: var(--radius-lg);
+            border: 2px solid var(--success);
+            margin-bottom: 1.75rem;
+            animation: fadeInUp 0.6s ease 0.6s backwards;
         }
-
-        .info-item-content h4 {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-            margin-bottom: 0.25rem;
+        .report-section h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--success); margin-bottom: 0.5rem; }
+        .report-section > p { color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.92rem; }
+        .report-options { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .report-option {
+            background: white; padding: 1.25rem; border-radius: var(--radius-md);
+            border: 2px solid transparent; cursor: pointer; transition: all 0.25s ease;
         }
+        .report-option.monthly-opt { border-color: #bfdbfe; }
+        .report-option.category-opt { border-color: #fde68a; }
+        .report-option:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .report-option.selected-monthly { border-color: var(--blue); background: #f0f9ff; }
+        .report-option.selected-category { border-color: var(--accent); background: #fffbeb; }
+        .report-option-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .report-option input[type="radio"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
+        .report-option label { cursor: pointer; font-weight: 700; font-size: 1rem; margin: 0; color: var(--text-primary); }
+        .report-option p { color: var(--text-secondary); font-size: 0.85rem; margin-left: 1.75rem; }
 
-        .info-item-content p {
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 1.1rem;
+        /* Report actions */
+        .report-actions {
+            margin-top: 1.5rem; display: none;
+            background: #fffbeb; padding: 1.25rem; border-radius: var(--radius-md);
+            border-left: 4px solid var(--accent);
         }
-
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 3rem;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.6s ease 0.7s backwards;
-        }
-
-        .btn {
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .report-actions.visible { display: block; }
+        #report-message { margin: 0 0 1.25rem 0; color: var(--text-primary); font-weight: 600; font-size: 0.92rem; }
+        .report-btns { display: flex; gap: 0.75rem; }
+        .btn-export {
+            flex: 1; padding: 0.82rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white; border: none; border-radius: var(--radius-md);
+            font-size: 0.95rem; font-weight: 700; cursor: pointer;
             font-family: 'DM Sans', sans-serif;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            border: none;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(15,118,110,0.3); transition: all 0.3s ease;
         }
+        .btn-export:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,118,110,0.4); }
+        .btn-export svg { width: 16px; height: 16px; stroke: white; stroke-width: 2; fill: none; }
+        .btn-cancel {
+            flex: 1; padding: 0.82rem;
+            background: var(--bg-main); color: var(--text-primary);
+            border: 2px solid var(--border); border-radius: var(--radius-md);
+            font-size: 0.95rem; font-weight: 700; cursor: pointer;
+            font-family: 'DM Sans', sans-serif; transition: all 0.3s ease;
+        }
+        .btn-cancel:hover { background: white; border-color: var(--primary); color: var(--primary); }
 
+        /* ──── Action Buttons ──── */
+        .action-buttons {
+            display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;
+            animation: fadeInUp 0.6s ease 0.65s backwards;
+        }
+        .btn {
+            padding: 0.9rem 1.75rem; border-radius: var(--radius-md);
+            font-size: 0.97rem; font-weight: 700; cursor: pointer;
+            transition: all 0.3s ease; font-family: 'DM Sans', sans-serif;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 0.6rem; border: none;
+        }
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(15, 118, 110, 0.3);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white; box-shadow: 0 4px 14px rgba(15,118,110,0.3);
         }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
-        }
-
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(15,118,110,0.4); }
         .btn-secondary {
-            background: var(--bg-main);
-            color: var(--text-primary);
-            border: 2px solid var(--border);
+            background: var(--bg-card); color: var(--text-primary);
+            border: 2px solid var(--border) !important;
         }
+        .btn-secondary:hover { border-color: var(--primary) !important; color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .btn svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2; fill: none; }
 
-        .btn-secondary:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn svg {
-            width: 18px;
-            height: 18px;
-            stroke: currentColor;
-            stroke-width: 2;
-            fill: none;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            animation: fadeInUp 0.6s ease 0.3s backwards;
-        }
-
-        .empty-state-icon {
-            width: 80px;
-            height: 80px;
-            background: var(--bg-main);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-        }
-
-        .empty-state-icon svg {
-            width: 40px;
-            height: 40px;
-            stroke: var(--text-secondary);
-            stroke-width: 2;
-            fill: none;
-        }
-
-        .empty-state h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-
-        .empty-state p {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-
-        /* Responsive Design */
+        /* ──── Responsive ──── */
         @media (max-width: 768px) {
-            .container {
-                margin: 2rem auto;
-                padding: 0 1rem;
-            }
-
-            h2 {
-                font-size: 2rem;
-            }
-
-            .total-card {
-                padding: 2rem 1.5rem;
-            }
-
-            .total-amount {
-                font-size: 3rem;
-            }
-
-            .currency-symbol {
-                font-size: 2.25rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .info-section {
-                padding: 2rem 1.5rem;
-            }
-
-            .info-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .btn {
-                justify-content: center;
-            }
-
-            .navbar {
-                padding: 1rem;
-                gap: 1rem;
-                flex-wrap: wrap;
-            }
-
-            .navbar a:first-child {
-                width: 100%;
-                margin-bottom: 0.5rem;
-            }
+            .navbar { padding: 0 1.25rem; }
+            .user-name { display: none; }
+            .container { margin: 2rem auto; padding: 0 1rem; }
+            h2 { font-size: 1.85rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .report-options { grid-template-columns: 1fr; }
+            .info-section, .report-section { padding: 1.5rem; }
+            .action-buttons { flex-direction: column; }
+            .report-btns { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
-<div class="navbar">
-    <a href="/" class="navbar-brand">ExpenseTracker</a>
+<nav class="navbar">
+    <a href="/" class="navbar-brand">
+        <div class="brand-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        ExpenseTracker
+    </a>
     <div class="navbar-links">
         <a href="/add">Add Expense</a>
         <a href="/view">View Expenses</a>
-        <a href="/summary">Summary</a>
+        <a href="/summary" class="nav-active">Summary</a>
         <th:block th:if="${user.admin}">
-            <a href="/admin/dashboard" style="color: var(--accent); font-weight: 600;">Admin Panel</a>
+            <a href="/admin/dashboard" class="admin-link">⚙ Admin</a>
         </th:block>
-        <div class="user-info">
-            <span style="font-weight: 500;">Welcome, <span th:text="${user.username}">User</span></span>
+        <div class="user-chip">
+            <div class="user-avatar" th:text="${#strings.substring(user.username, 0, 1).toUpperCase()}">U</div>
+            <span class="user-name" th:text="${user.username}">User</span>
             <a href="/auth/logout" class="logout-btn">Logout</a>
         </div>
     </div>
-</div>
+</nav>
 
 <div class="container">
+    <!-- Page Header -->
     <div class="page-header">
         <div class="icon-wrapper">
-            <svg viewBox="0 0 24 24">
-                <line x1="18" y1="20" x2="18" y2="10"></line>
-                <line x1="12" y1="20" x2="12" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="14"></line>
-            </svg>
+            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
         </div>
         <h2>Expense Summary</h2>
         <p class="subtitle">Your complete financial overview at a glance</p>
     </div>
 
-    <!-- Total Spending Card -->
+    <!-- Total Card -->
     <div class="total-card">
         <div class="total-label">Total Spending</div>
         <div class="total-amount">
@@ -569,91 +325,65 @@
         </div>
     </div>
 
-    <!-- Stats Grid - Placeholder for future enhancements -->
+    <!-- Stats Grid -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-header">
                 <div class="stat-title">This Month</div>
-                <div class="stat-icon purple">
-                    <svg viewBox="0 0 24 24">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
+                <div class="stat-icon-badge purple">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 </div>
             </div>
             <div class="stat-value">₹<span th:text="${total}">0</span></div>
-            <div class="stat-description">Current month expenses</div>
+            <div class="stat-desc">Current month expenses</div>
         </div>
-
         <div class="stat-card">
             <div class="stat-header">
-                <div class="stat-title">Average</div>
-                <div class="stat-icon blue">
-                    <svg viewBox="0 0 24 24">
-                        <line x1="12" y1="20" x2="12" y2="10"></line>
-                        <line x1="18" y1="20" x2="18" y2="4"></line>
-                        <line x1="6" y1="20" x2="6" y2="16"></line>
-                    </svg>
+                <div class="stat-title">Average Per Entry</div>
+                <div class="stat-icon-badge blue">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
                 </div>
             </div>
             <div class="stat-value">₹<span th:text="${average}">0.00</span></div>
-            <div class="stat-description">Per transaction</div>
+            <div class="stat-desc">Per transaction average</div>
         </div>
-
         <div class="stat-card">
             <div class="stat-header">
                 <div class="stat-title">Categories</div>
-                <div class="stat-icon orange">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                        <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg>
+                <div class="stat-icon-badge orange">
+                    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                 </div>
             </div>
             <div class="stat-value"><span th:text="${categoryCount}">0</span></div>
-            <div class="stat-description">Tracked categories</div>
+            <div class="stat-desc">Tracked categories</div>
         </div>
     </div>
 
-    <!-- Additional Info Section -->
+    <!-- Financial Insights -->
     <div class="info-section">
         <h3>Financial Insights</h3>
         <div class="info-grid">
             <div class="info-item">
                 <div class="info-item-icon">
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
                 <div class="info-item-content">
                     <h4>Last Updated</h4>
                     <p>Just now</p>
                 </div>
             </div>
-
             <div class="info-item">
                 <div class="info-item-icon">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </div>
                 <div class="info-item-content">
                     <h4>Account Status</h4>
                     <p>Active</p>
                 </div>
             </div>
-
             <div class="info-item">
                 <div class="info-item-icon">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
+                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 </div>
                 <div class="info-item-content">
                     <h4>Export</h4>
@@ -664,50 +394,35 @@
     </div>
 
     <!-- Report Section -->
-    <div class="info-section" style="background: linear-gradient(135deg, #f0fdf4 0%, #f0fdf4 100%); border: 2px solid var(--success);">
-        <h3 style="color: var(--success);">Generate & Export Reports</h3>
-        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Select a report type to generate and download your expense report.</p>
-        
-        <div class="info-grid" style="gap: 1rem;">
-            <!-- Monthly Report -->
-            <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #e0f2fe; cursor: pointer; transition: all 0.3s ease;" 
-                 onclick="selectReportType('monthly')" id="monthly-option">
-                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                    <input type="radio" name="reportType" value="monthly" id="monthly-radio" style="cursor: pointer; width: 20px; height: 20px;">
-                    <label for="monthly-radio" style="cursor: pointer; font-weight: 600; font-size: 1.1rem; margin: 0;">Monthly Report</label>
-                </div>
-                <p style="color: var(--text-secondary); margin-left: 2rem; font-size: 0.9rem;">Expenses grouped by month with totals for each month</p>
-            </div>
+    <div class="report-section">
+        <h3>📊 Generate &amp; Export Reports</h3>
+        <p>Select a report type to generate and download your expense report.</p>
 
-            <!-- Category-wise Report -->
-            <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid #fef3c7; cursor: pointer; transition: all 0.3s ease;" 
-                 onclick="selectReportType('category')" id="category-option">
-                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                    <input type="radio" name="reportType" value="category" id="category-radio" style="cursor: pointer; width: 20px; height: 20px;">
-                    <label for="category-radio" style="cursor: pointer; font-weight: 600; font-size: 1.1rem; margin: 0;">Category-wise Report</label>
+        <div class="report-options">
+            <div class="report-option monthly-opt" onclick="selectReportType('monthly')" id="monthly-option">
+                <div class="report-option-header">
+                    <input type="radio" name="reportType" value="monthly" id="monthly-radio">
+                    <label for="monthly-radio">Monthly Report</label>
                 </div>
-                <p style="color: var(--text-secondary); margin-left: 2rem; font-size: 0.9rem;">Expenses grouped by category with detailed breakdown</p>
+                <p>Expenses grouped by month with totals for each month</p>
+            </div>
+            <div class="report-option category-opt" onclick="selectReportType('category')" id="category-option">
+                <div class="report-option-header">
+                    <input type="radio" name="reportType" value="category" id="category-radio">
+                    <label for="category-radio">Category-wise Report</label>
+                </div>
+                <p>Expenses grouped by category with detailed breakdown</p>
             </div>
         </div>
 
-        <!-- Report Display and Export -->
-        <div id="report-display" style="margin-top: 2rem; display: none;">
-            <div style="background: #fffbeb; padding: 1.5rem; border-radius: 12px; border-left: 4px solid var(--accent); margin-bottom: 1.5rem;">
-                <p id="report-message" style="margin: 0; color: var(--text-primary); font-weight: 500;"></p>
-            </div>
-            
-            <div style="display: flex; gap: 1rem;">
-                <button onclick="exportReport()" class="btn btn-primary" id="export-button" style="flex: 1; justify-content: center;">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
+        <div class="report-actions" id="report-display">
+            <p id="report-message"></p>
+            <div class="report-btns">
+                <button onclick="exportReport()" class="btn-export">
+                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Export as PDF
                 </button>
-                <button onclick="cancelReport()" class="btn btn-secondary" style="flex: 1; justify-content: center;">
-                    Cancel
-                </button>
+                <button onclick="cancelReport()" class="btn-cancel">Cancel</button>
             </div>
         </div>
     </div>
@@ -715,17 +430,11 @@
     <!-- Action Buttons -->
     <div class="action-buttons">
         <a href="/add" class="btn btn-primary">
-            <svg viewBox="0 0 24 24">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add New Expense
         </a>
         <a href="/view" class="btn btn-secondary">
-            <svg viewBox="0 0 24 24">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             View All Expenses
         </a>
     </div>
@@ -735,49 +444,32 @@
 
         function selectReportType(type) {
             selectedReportType = type;
-            
-            // Update UI
-            document.getElementById('monthly-option').style.borderColor = type === 'monthly' ? '#3b82f6' : '#e0f2fe';
-            document.getElementById('monthly-option').style.backgroundColor = type === 'monthly' ? '#f0f9ff' : 'white';
-            document.getElementById('category-option').style.borderColor = type === 'category' ? '#f59e0b' : '#fef3c7';
-            document.getElementById('category-option').style.backgroundColor = type === 'category' ? '#fffbeb' : 'white';
-            
-            document.getElementById('monthly-radio').checked = type === 'monthly';
+            const monthlyOpt  = document.getElementById('monthly-option');
+            const categoryOpt = document.getElementById('category-option');
+            monthlyOpt.className  = 'report-option monthly-opt' + (type === 'monthly'  ? ' selected-monthly'  : '');
+            categoryOpt.className = 'report-option category-opt' + (type === 'category' ? ' selected-category' : '');
+            document.getElementById('monthly-radio').checked  = type === 'monthly';
             document.getElementById('category-radio').checked = type === 'category';
-            
-            // Show report display section
-            document.getElementById('report-display').style.display = 'block';
-            
-            // Update message
-            if (type === 'monthly') {
-                document.getElementById('report-message').textContent = '✓ Monthly Report selected. Click "Export as PDF" to download your expenses grouped by month.';
-            } else {
-                document.getElementById('report-message').textContent = '✓ Category-wise Report selected. Click "Export as PDF" to download your expenses grouped by category.';
-            }
+            const display = document.getElementById('report-display');
+            display.classList.add('visible');
+            document.getElementById('report-message').textContent =
+                type === 'monthly'
+                    ? '✓ Monthly Report selected. Click "Export as PDF" to download your expenses grouped by month.'
+                    : '✓ Category-wise Report selected. Click "Export as PDF" to download your expenses grouped by category.';
         }
 
         function exportReport() {
-            if (!selectedReportType) {
-                alert('Please select a report type first.');
-                return;
-            }
-
-            const exportUrl = selectedReportType === 'monthly' 
-                ? '/report/monthly' 
-                : '/report/category';
-            
-            window.location.href = exportUrl;
+            if (!selectedReportType) { alert('Please select a report type first.'); return; }
+            window.location.href = selectedReportType === 'monthly' ? '/report/monthly' : '/report/category';
         }
 
         function cancelReport() {
             selectedReportType = null;
-            document.getElementById('report-display').style.display = 'none';
-            document.getElementById('monthly-radio').checked = false;
+            document.getElementById('report-display').classList.remove('visible');
+            document.getElementById('monthly-radio').checked  = false;
             document.getElementById('category-radio').checked = false;
-            document.getElementById('monthly-option').style.borderColor = '#e0f2fe';
-            document.getElementById('monthly-option').style.backgroundColor = 'white';
-            document.getElementById('category-option').style.borderColor = '#fef3c7';
-            document.getElementById('category-option').style.backgroundColor = 'white';
+            document.getElementById('monthly-option').className  = 'report-option monthly-opt';
+            document.getElementById('category-option').className = 'report-option category-opt';
         }
     </script>
 </div>

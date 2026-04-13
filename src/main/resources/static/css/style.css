@@ -1,67 +1,57 @@
-body {
-    font-family: Arial, sans-serif;
+/* =========================================
+   Global Base Styles — Expense Tracker
+   ========================================= */
+
+*, *::before, *::after {
     margin: 0;
-    background-color: #f4f6f9;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.navbar {
-    background-color: #2c3e50;
-    padding: 15px;
+:root {
+    --primary:        #0f766e;
+    --primary-light:  #14b8a6;
+    --primary-dark:   #0d5e57;
+    --accent:         #f59e0b;
+    --accent-dark:    #d97706;
+    --bg-main:        #fafaf9;
+    --bg-card:        #ffffff;
+    --text-primary:   #1c1917;
+    --text-secondary: #57534e;
+    --border:         #e7e5e4;
+    --shadow:         rgba(0, 0, 0, 0.08);
+    --danger:         #dc2626;
+    --success:        #10b981;
+    --purple:         #8b5cf6;
+    --blue:           #3b82f6;
+    --radius-sm:      8px;
+    --radius-md:      12px;
+    --radius-lg:      20px;
+    --radius-xl:      24px;
 }
 
-.navbar a {
-    color: white;
-    margin-right: 20px;
-    text-decoration: none;
-    font-weight: bold;
+html {
+    scroll-behavior: smooth;
 }
 
-.navbar a:hover {
-    text-decoration: underline;
+body {
+    font-family: 'DM Sans', 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #fafaf9 0%, #f5f5f4 100%);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
 }
 
-.container {
-    padding: 30px;
+/* Ensure page content never hides under sticky navbar */
+main, .page-content {
+    padding-top: 1rem;
 }
 
-h1, h2 {
-    color: #2c3e50;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-main); }
+::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 3px; }
 
-table {
-    border-collapse: collapse;
-    width: 100%;
-    background-color: white;
-}
-
-th, td {
-    padding: 12px;
-    text-align: center;
-}
-
-th {
-    background-color: #34495e;
-    color: white;
-}
-
-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-button {
-    padding: 8px 15px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #2980b9;
-}
-
-input {
-    padding: 8px;
-    width: 200px;
-    margin-bottom: 10px;
-}
+/* Selection */
+::selection { background: rgba(20, 184, 166, 0.2); }
