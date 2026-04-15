@@ -74,8 +74,8 @@ The project strictly follows the **MVC (Model-View-Controller)** pattern with di
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/GSuryaP/Expense-Tracker.git
-cd Expense-Tracker
+git clone https://github.com/GSuryaP/UE23CS352B-Project.git
+cd UE23CS352B-Project
 ```
 
 ### 2. Configure MySQL Database
